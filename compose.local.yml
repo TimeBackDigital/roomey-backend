@@ -1,0 +1,46 @@
+services:
+  node:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/node.dockerfile
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - /app/generated
+    ports:
+      - '8080:8080'
+    networks:
+      - roomey-be-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+  postgres:
+    image: 'postgres:17.6'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    env_file:
+      - .env
+    volumes:
+      - roomey-be-db:/var/lib/mysql
+    networks:
+      - roomey-be-network
+  redis:
+    image: 'redis:8.2.1'
+    env_file:
+      - .env
+    volumes:
+      - roomey-be-cache:/data
+    networks:
+      - roomey-be-network
+    
+networks:
+  roomey-be-network:
+volumes:
+  roomey-be-db:
+  roomey-be-cache:

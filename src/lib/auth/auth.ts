@@ -4,6 +4,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import {
   admin,
   captcha,
+  createAuthMiddleware,
   emailOTP,
   haveIBeenPwned,
   magicLink,
@@ -14,6 +15,7 @@ import Stripe from "stripe";
 import { appConfig } from "../../config/app-config";
 import { ConfirmationEmail } from "../../react-email/confirmation-email";
 import { OtpEmail } from "../../react-email/otp-email";
+import { ResetPasswordEmail } from "../../react-email/reset-password-email";
 import {
   ac,
   admin as adminRole,
@@ -30,6 +32,22 @@ import { sendSMS } from "../twillio/twillio";
 
 export const auth: ReturnType<typeof betterAuth> = betterAuth({
   appName: appConfig.APP_NAME,
+  hooks: {
+    after: createAuthMiddleware(async (ctx) => {
+      if (ctx.path.startsWith("/sign-up") || ctx.path.startsWith("/sign-in")) {
+        const newSession = ctx.context.newSession;
+
+        if (newSession) {
+          await prisma.user_table.update({
+            where: { id: newSession.user.id },
+            data: {
+              user_last_login_at: new Date(),
+            },
+          });
+        }
+      }
+    }),
+  },
   advanced: {
     cookiePrefix: `${appConfig.APP_NAME}-AUTH`,
   },
@@ -57,6 +75,10 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
       user_is_onboarded: {
         type: "boolean",
         defaultValue: false,
+      },
+      user_phone_number: {
+        type: "string",
+        defaultValue: "",
       },
     },
   },
@@ -116,13 +138,15 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, token }) => {
-      const tokenUrl = `${appConfig.WEBSITE_URL}/email-verification?token=${token}`;
+    expiresIn: 1000 * 60 * 10, // 10 minutes
+    sendVerificationEmail: async ({ url, user, token }) => {
+      const tokenUrl = `${url}?token=${token}`;
       await sendEmail({
         to: user.email,
-        subject: "Verify your email address",
+        subject: "Verify your Roomey account",
         html: ConfirmationEmail({
           magicLink: tokenUrl,
+          name: user.name,
         }),
         from: `${appConfig.APP_EMAIL}`,
       });
@@ -136,13 +160,15 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
+    expiresIn: 1000 * 60 * 10, // 10 minutes
     sendResetPassword: async ({ user, url, token }) => {
       const tokenUrl = `${url}?token=${token}`;
       await sendEmail({
         to: user.email,
         subject: "Reset your password",
-        html: ConfirmationEmail({
+        html: ResetPasswordEmail({
           magicLink: tokenUrl,
+          name: user.name,
         }),
         from: `${appConfig.APP_EMAIL}`,
       });
@@ -188,7 +214,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
       sendOTP: async ({ phoneNumber, code }) => {
         await sendSMS({
           to: phoneNumber,
-          message: `Your verification code is ${code}`,
+          message: `Your Roomey verification code is ${code}. This code will expire in 10 minutes. if you didn't request this code, please ignore this message.`,
         });
       },
     }),

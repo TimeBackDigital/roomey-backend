@@ -12,8 +12,9 @@ import {
   Section,
   Text,
 } from "@react-email/components";
+import { appConfig } from "src/config/app-config";
 
-const baseUrl = process.env.WEBSITE_URL ?? "";
+const baseUrl = appConfig.WEBSITE_URL ?? "";
 
 export const OtpEmail = ({ validationCode }: { validationCode: string }) => (
   <Html>
@@ -127,7 +128,7 @@ export const OtpEmail = ({ validationCode }: { validationCode: string }) => (
             Slack Community
           </Link>
           <Text style={{ ...footerText, textAlign: "left" }}>
-            ©2025 {process.env.APP_NAME}
+            ©2025 {appConfig.APP_NAME}
             <br />
             500 Howard Street, San Francisco, CA 94105, USA <br />
             <br />

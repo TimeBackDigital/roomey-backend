@@ -193,7 +193,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
       const tokenUrl = `${url}?token=${token}`;
       await sendEmail({
         to: user.email,
-        subject: `Login to your ${process.env.APP_NAME} account`,
+        subject: `Login to your ${appConfig.APP_NAME} account`,
         html: ConfirmationEmail({
           magicLink: tokenUrl,
         }),
@@ -315,7 +315,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
     }),
     captcha({
       provider: "cloudflare-turnstile", // or google-recaptcha, hcaptcha
-      secretKey: process.env.TURNSTILE_SECRET_KEY!,
+      secretKey: appConfig.TURNSTILE_SECRET_KEY,
     }),
   ],
   secondaryStorage: {

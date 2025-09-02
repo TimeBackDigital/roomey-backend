@@ -11,6 +11,7 @@ import {
   Text,
 } from "@react-email/components";
 import * as React from "react";
+import { appConfig } from "src/config/app-config";
 
 type ConfirmationEmailProps = {
   magicLink: string;
@@ -57,7 +58,7 @@ export const ConfirmationEmail = ({
 
           <Text style={{ ...reportLink, marginTop: "24px" }}>
             Not you?{" "}
-            <Link href={`${process.env.WEBSITE_URL}/report`} style={reportLink}>
+            <Link href={`${appConfig.WEBSITE_URL}/report`} style={reportLink}>
               Report a suspicious login
             </Link>
           </Text>

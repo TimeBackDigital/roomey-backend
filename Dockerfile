@@ -13,9 +13,8 @@ COPY . .
 
 RUN pnpm prisma:generate && pnpm build
 
-RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
+RUN --mount=type=cache,id=s/6cf4b6f9-51b8-45c8-b4bd-7052ee844bd7-pnpm-store,target=/root/.local/share/pnpm/store \
     pnpm prune --prod --ignore-scripts
-
 
 FROM node:20.10-slim AS runner
 WORKDIR /usr/src/app

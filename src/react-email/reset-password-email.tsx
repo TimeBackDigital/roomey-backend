@@ -47,6 +47,11 @@ export const ResetPasswordEmail = ({
             This magic link will expire in 10 minutes
           </Text>
 
+          <Text style={paragraphItalic}>
+            If you didn't request this, please ignore this message or let us
+            know.
+          </Text>
+
           <Text style={paragraph}>
             Best regards, <br />
             The Roomey Team
@@ -109,6 +114,14 @@ const paragraph: React.CSSProperties = {
   lineHeight: "24px",
   margin: "8px 0",
   color: "#414b57",
+};
+
+const paragraphItalic: React.CSSProperties = {
+  fontSize: "16px",
+  lineHeight: "24px",
+  margin: "8px 0",
+  color: "#414b57",
+  fontStyle: "italic",
 };
 
 const button: React.CSSProperties = {

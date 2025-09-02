@@ -1,5 +1,4 @@
 // src/config/app.config.ts
-import "dotenv/config";
 import { z } from "zod";
 
 export const appConfigSchema = z.object({

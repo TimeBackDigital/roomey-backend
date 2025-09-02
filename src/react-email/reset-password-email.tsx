@@ -11,6 +11,7 @@ import {
   Text,
 } from "@react-email/components";
 import * as React from "react";
+import { appConfig } from "src/config/app-config";
 
 type ResetPasswordEmail = {
   magicLink: string;
@@ -47,6 +48,11 @@ export const ResetPasswordEmail = ({
             This magic link will expire in 10 minutes
           </Text>
 
+          <Text style={paragraphItalic}>
+            If you didn't request this, please ignore this message or let us
+            know.
+          </Text>
+
           <Text style={paragraph}>
             Best regards, <br />
             The Roomey Team
@@ -54,7 +60,7 @@ export const ResetPasswordEmail = ({
 
           <Text style={{ ...reportLink, marginTop: "24px" }}>
             Not you?{" "}
-            <Link href={`${process.env.WEBSITE_URL}/report`} style={reportLink}>
+            <Link href={`${appConfig.WEBSITE_URL}/report`} style={reportLink}>
               Report a suspicious login
             </Link>
           </Text>
@@ -109,6 +115,14 @@ const paragraph: React.CSSProperties = {
   lineHeight: "24px",
   margin: "8px 0",
   color: "#414b57",
+};
+
+const paragraphItalic: React.CSSProperties = {
+  fontSize: "16px",
+  lineHeight: "24px",
+  margin: "8px 0",
+  color: "#414b57",
+  fontStyle: "italic",
 };
 
 const button: React.CSSProperties = {

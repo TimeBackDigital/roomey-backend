@@ -2,6 +2,7 @@ import { Injectable, NestMiddleware } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
 import pinoHttp, { GenReqId, Options, ReqId } from "pino-http";
 import { v4 as uuidv4 } from "uuid";
+import { appConfig } from "../config/app-config";
 
 const PinoLevelToGoogleLoggingSeverityLookup = Object.freeze({
   trace: "DEBUG",
@@ -85,8 +86,8 @@ export class LoggerMiddleware implements NestMiddleware {
   private readonly logger;
 
   constructor() {
-    const logLevel = process.env.LOG_LEVEL || "info";
-    const logService = process.env.LOG_SERVICE || "console";
+    const logLevel = appConfig.LOG_LEVEL || "info";
+    const logService = appConfig.LOG_SERVICE || "console";
     const isDebug = process.env.DEBUG;
 
     const pinoHttpOptions: Options = {

@@ -1,25 +1,39 @@
-# Stage 1: Base image with Bun and Doppler
-FROM node:20.10-slim AS base
 
-# Set the working directory inside the container
+FROM node:20.10-slim AS builder
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
 
-# Install the application dependencies
-RUN npm install
+RUN corepack enable && corepack prepare pnpm@9.6.0 --activate
 
-# Copy the rest of the application files
+
+ENV HUSKY=0
+
+
+COPY pnpm-lock.yaml package.json ./
+
+
+
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile
+
+
 COPY . .
 
-# Build the NestJS application
 
-RUN npm run prisma:generate
-RUN npm run build
+RUN pnpm prisma:generate && pnpm build
 
-# Expose the application port
+
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
+    pnpm prune --prod --ignore-scripts
+
+
+FROM node:20.10-slim AS runner
+WORKDIR /usr/src/app
+ENV NODE_ENV=production
+
+COPY --from=builder /usr/src/app/package.json ./package.json
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/dist ./dist
+
 EXPOSE 3000
-
-# Command to run the application
-CMD ["node", "dist/main"]
+CMD ["node", "dist/main.js"]

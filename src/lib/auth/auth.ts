@@ -193,7 +193,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
       const tokenUrl = `${url}?token=${token}`;
       await sendEmail({
         to: user.email,
-        subject: `Login to your ${process.env.APP_NAME} account`,
+        subject: `Login to your ${appConfig.APP_NAME} account`,
         html: ConfirmationEmail({
           magicLink: tokenUrl,
         }),
@@ -211,10 +211,17 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
           },
         },
       },
+      expiresIn: 1000 * 60 * 10, // 10 minutes
+      async sendPasswordResetOTP(data) {
+        await sendSMS({
+          to: data.phoneNumber,
+          message: `Your Roomey verification code is ${data.code}.\n\nThis code will expire in 10 minutes.\n\nTo change your password, enter this code on the verification page.\n\nIf you didn’t request this, please disregard this message.`,
+        });
+      },
       sendOTP: async ({ phoneNumber, code }) => {
         await sendSMS({
           to: phoneNumber,
-          message: `Your Roomey verification code is ${code}. This code will expire in 10 minutes. if you didn't request this code, please ignore this message.`,
+          message: `Your Roomey verification code is ${code}. This code will expire in 10 minutes. \n\nTo change your password, enter this code on the verification page.\n\nIf you didn't request this, please disregard this message.`,
         });
       },
     }),
@@ -308,7 +315,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
     }),
     captcha({
       provider: "cloudflare-turnstile", // or google-recaptcha, hcaptcha
-      secretKey: process.env.TURNSTILE_SECRET_KEY!,
+      secretKey: appConfig.TURNSTILE_SECRET_KEY,
     }),
   ],
   secondaryStorage: {

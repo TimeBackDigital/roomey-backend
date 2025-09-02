@@ -1,3 +1,4 @@
 import { Redis } from "ioredis";
+import { appConfig } from "../../config/app-config";
 
-export const redis = new Redis(process.env.REDIS_URL!);
+export const redis = new Redis(appConfig.REDIS_URL);

@@ -78,3 +78,33 @@ export const formatElapsedTime = (elapsedMs: number) => {
     return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
   }
 };
+
+export const NormalizePhone = (raw: string) => {
+  const d = raw.replace(/[^\d]/g, "");
+
+  const domesticPrefixes = {
+    "09": "+63",
+    "04": "+61",
+    "01": "+1",
+  };
+
+  for (const prefix in domesticPrefixes) {
+    if (d.startsWith(prefix) && d.length === (prefix === "04" ? 10 : 11)) {
+      return `${domesticPrefixes[prefix]}${d.slice(1)}`;
+    }
+  }
+
+  if (d.startsWith("1") && d.length >= 10) {
+    return `+${d.substring(0, 11)}`;
+  }
+
+  if (d.startsWith("61") && d.length >= 10) {
+    return `+${d}`;
+  }
+
+  if (d.startsWith("63") && d.length >= 12) {
+    return `+${d}`;
+  }
+
+  return `+${d}`;
+};

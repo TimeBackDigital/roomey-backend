@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma } from "generated/client";
+import { Prisma } from "@prisma/client";
 import { formatElapsedTime } from "src/lib/helper";
 import { prisma } from "src/lib/prisma/prisma";
 import { OnboardingDto, UserListDto } from "./dto/user.schema";
@@ -110,17 +110,6 @@ export class UserService {
         },
       },
     });
-
-    // await auth.api.refreshToken({
-    //   query: {
-    //     userId,
-    //   },
-    //   body: {
-    //     providerId: user.user_account_tables[0].user_account_provider_id,
-    //     accountId: user.user_account_tables[0].user_account_account_id,
-    //     userId: userId,
-    //   },
-    // });
     return user;
   }
 }

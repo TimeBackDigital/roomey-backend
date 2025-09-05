@@ -27,7 +27,7 @@ services:
     env_file:
       - .env
     volumes:
-      - roomey-be-db:/var/lib/mysql
+      - roomey-be-db:/data/postgres
     networks:
       - roomey-be-network
   redis:

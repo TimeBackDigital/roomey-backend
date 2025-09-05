@@ -28,8 +28,10 @@ Optionals
 ````
 docker compose up -f compose.local.yml -d --build
 ```
-3. Check browser http://localhost:8080. You should receive a 404 JSON error.
-
+3. Check browsers:
+    - http://localhost:8080/api/docs : Non authentication related APIs.
+    - http://localhost:8080/api/auth/reference : Authentication APIs.
+    
 ## Production Setup
 
 TO FOLLOW

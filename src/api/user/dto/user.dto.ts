@@ -2,14 +2,14 @@ import { AGENCY, LISTER, SEEKER } from "src/lib/constant";
 import z from "zod";
 
 export const SeekerSchema = z.object({
-  profilePhoto: z.instanceof(File),
+  profilePhoto: z.union([z.string()]),
   allowMarketing: z.boolean(),
   allowVerification: z.boolean(),
   role: z.literal(SEEKER),
 });
 
 export const ListerSchema = z.object({
-  profilePhoto: z.instanceof(File),
+  profilePhoto: z.union([z.string()]),
   allowMarketing: z.boolean(),
   allowVerification: z.boolean(),
   propertyName: z.string(),
@@ -17,6 +17,7 @@ export const ListerSchema = z.object({
 });
 
 export const AgencySchema = z.object({
+  profilePhoto: z.union([z.string()]),
   agencyName: z.string(),
   agencyLicense: z.string(),
   allowMarketing: z.boolean(),
@@ -34,6 +35,8 @@ export const UserListSchema = z.object({
   page: z.coerce.number().min(1).default(1),
   take: z.coerce.number().min(1).default(10),
   search: z.string().optional(),
+  startDate: z.string(),
+  endDate: z.string(),
   sort: z.string().optional(),
   filter: z.string().optional(),
   order: z.string().optional(),

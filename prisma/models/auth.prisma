@@ -20,7 +20,6 @@ model user_table {
 
   @@unique([user_email])
   @@map("user_table")
-  @@schema("auth_schema")
 }
 
 model user_account_table {
@@ -39,7 +38,6 @@ model user_account_table {
   user_account_updated_at              DateTime   @db.Timestamptz(3)
 
   @@map("user_account_table")
-  @@schema("auth_schema")
 }
 
 model user_profile_table {
@@ -55,7 +53,6 @@ model user_profile_table {
 
   @@unique([user_profile_user_id])
   @@map("user_profile_table")
-  @@schema("auth_schema")
 }
 
 model verification_table {
@@ -67,5 +64,4 @@ model verification_table {
   verification_updated_at DateTime? @db.Timestamptz(3)
 
   @@map("verification_table")
-  @@schema("auth_schema")
 }
